@@ -5,7 +5,6 @@
   "outputDirectory": "frontend/dist",
   "functions": {
     "api/run-backtest/index.py": {
-      "runtime": "python3.11",
       "maxDuration": 60
     }
   },
