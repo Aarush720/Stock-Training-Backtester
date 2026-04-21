@@ -22,6 +22,11 @@ class handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         try:
+            import sys
+            import os
+            # Ensure the root project directory is in the system path so core_backtest can be discovered.
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+            
             # Import lazily so dependency issues return JSON instead of a generic function crash.
             from core_backtest import compute_risk_metrics, fetch_and_engineer, run_models
 
