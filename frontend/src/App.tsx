@@ -787,7 +787,7 @@ export default function App() {
               >
                 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 w-full">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 w-full">
                   {[
                     { label: "AI Return", value: results.metrics.ai_return, type: "percent", color: "accent" },
                     { label: "Benchmark", value: results.metrics.benchmark_return, type: "percent", color: "secondary" },
@@ -800,13 +800,13 @@ export default function App() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: 0.1 + i * 0.1 }}
-                      className="bg-base-light border border-border-accent p-5 rounded flex flex-col gap-2"
+                      className="bg-base-light border border-border-accent p-3.5 md:p-4 rounded flex flex-col justify-center gap-1.5 min-w-0"
                     >
-                      <span className="text-xs uppercase tracking-widest text-text-secondary font-medium">
+                      <span className="text-[10px] md:text-xs uppercase tracking-widest text-text-secondary font-medium leading-tight">
                         {metric.label}
                       </span>
                       <span className={cn(
-                        "text-2xl font-semibold font-inter", 
+                        "text-lg xl:text-2xl font-semibold font-inter tracking-tight truncate", 
                         metric.color === "accent" ? "text-accent" : 
                         metric.color === "white" ? "text-white" : "text-text-secondary"
                       )}>
