@@ -4,7 +4,7 @@
   "buildCommand": "npm --prefix frontend run build:client",
   "outputDirectory": "frontend/dist",
   "functions": {
-    "api/run-backtest/index.py": {
+    "api/**/*.py": {
       "maxDuration": 60
     }
   },
