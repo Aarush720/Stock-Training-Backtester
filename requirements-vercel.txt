@@ -1,5 +1,0 @@
-fastapi
-yfinance
-pandas
-numpy
-scikit-learn

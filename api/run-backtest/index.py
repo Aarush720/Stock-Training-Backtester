@@ -1,7 +1,7 @@
 import json
 from http.server import BaseHTTPRequestHandler
 
-from main import compute_risk_metrics, fetch_and_engineer, run_models
+from core_backtest import compute_risk_metrics, fetch_and_engineer, run_models
 
 
 class handler(BaseHTTPRequestHandler):

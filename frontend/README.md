@@ -46,13 +46,13 @@ This repo is now configured for a single Vercel project:
 1. Import the repository in Vercel.
 2. Keep the project Root Directory as repository root.
 3. Vercel will use `vercel.json` automatically:
-   - Install command: installs Python deps from `requirements-vercel.txt` and frontend npm deps
-   - Build command: installs frontend deps and runs `vite build`
+   - Install command: installs frontend npm deps
+   - Build command: runs `vite build`
    - Output directory: `frontend/dist`
-   - API function runtime: Python 3.11
+   - API function: `api/run-backtest/index.py`
 4. Deploy.
 
 ### Notes
 
 - No frontend code changes are required for production API calls because the app already uses `/api/run-backtest`.
-- Vercel Python dependencies are installed from `requirements-vercel.txt`.
+- Vercel Python dependencies are installed from repository root `requirements.txt`.
