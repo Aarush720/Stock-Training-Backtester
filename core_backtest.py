@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 from sklearn.tree import DecisionTreeRegressor
-from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor, HistGradientBoostingRegressor
 
 
 def compute_rsi(returns, window=14):
@@ -87,10 +87,9 @@ def run_models(df, window):
         max_depth=5,
         min_samples_leaf=8,
         random_state=42,
-        n_jobs=-1,
     )
-    model_gb = GradientBoostingRegressor(
-        n_estimators=80,
+    model_hgb = HistGradientBoostingRegressor(
+        max_iter=80,
         learning_rate=0.05,
         max_depth=2,
         random_state=42,
@@ -99,7 +98,7 @@ def run_models(df, window):
     ensemble_preds = []
     pred_confidences = []
 
-    retrain_every = 5
+    retrain_every = 21
     weights = np.array([0.25, 0.4, 0.35], dtype=float)
 
     for step_idx, i in enumerate(range(window, len(df))):
@@ -110,7 +109,7 @@ def run_models(df, window):
 
             model_dt.fit(X_train, y_train)
             model_rf.fit(X_train, y_train)
-            model_gb.fit(X_train, y_train)
+            model_hgb.fit(X_train, y_train)
 
             # Weight models by recent inverse MAE so better recent performers influence signal more.
             recent = min(60, len(X_train))
@@ -120,16 +119,16 @@ def run_models(df, window):
 
                 mae_dt = np.mean(np.abs(model_dt.predict(X_recent) - y_recent)) + 1e-9
                 mae_rf = np.mean(np.abs(model_rf.predict(X_recent) - y_recent)) + 1e-9
-                mae_gb = np.mean(np.abs(model_gb.predict(X_recent) - y_recent)) + 1e-9
+                mae_hgb = np.mean(np.abs(model_hgb.predict(X_recent) - y_recent)) + 1e-9
 
-                inv = np.array([1 / mae_dt, 1 / mae_rf, 1 / mae_gb], dtype=float)
+                inv = np.array([1 / mae_dt, 1 / mae_rf, 1 / mae_hgb], dtype=float)
                 weights = inv / inv.sum()
 
         pred_dt = model_dt.predict(X_test)[0]
         pred_rf = model_rf.predict(X_test)[0]
-        pred_gb = model_gb.predict(X_test)[0]
+        pred_hgb = model_hgb.predict(X_test)[0]
 
-        ensemble_pred = float(weights[0] * pred_dt + weights[1] * pred_rf + weights[2] * pred_gb)
+        ensemble_pred = float(weights[0] * pred_dt + weights[1] * pred_rf + weights[2] * pred_hgb)
         current_vol = float(df.iloc[i]["Volatility"])
         confidence = abs(ensemble_pred) / (current_vol + 1e-9)
 
