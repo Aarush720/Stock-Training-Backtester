@@ -2,8 +2,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from core_backtest import compute_risk_metrics, fetch_and_engineer, run_models
-
 app = FastAPI(title="ML Trading Backend")
 
 app.add_middleware(
@@ -23,6 +21,9 @@ class BacktestRequest(BaseModel):
 @app.post("/api/run-backtest")
 async def process_backtest(request: BacktestRequest):
     try:
+        # Import lazily so a dependency issue returns a readable API error instead of crashing the runtime at startup.
+        from core_backtest import compute_risk_metrics, fetch_and_engineer, run_models
+
         if request.train_window <= 0:
             raise ValueError("train_window must be greater than 0.")
 

@@ -1,8 +1,6 @@
 import json
+import traceback
 from http.server import BaseHTTPRequestHandler
-
-from core_backtest import compute_risk_metrics, fetch_and_engineer, run_models
-
 
 class handler(BaseHTTPRequestHandler):
     def _send_json(self, status_code: int, payload: dict) -> None:
@@ -19,8 +17,14 @@ class handler(BaseHTTPRequestHandler):
     def do_OPTIONS(self) -> None:
         self._send_json(200, {"status": "ok"})
 
+    def do_GET(self) -> None:
+        self._send_json(200, {"status": "ok", "service": "run-backtest"})
+
     def do_POST(self) -> None:
         try:
+            # Import lazily so dependency issues return JSON instead of a generic function crash.
+            from core_backtest import compute_risk_metrics, fetch_and_engineer, run_models
+
             content_length = int(self.headers.get("Content-Length", "0"))
             raw_body = self.rfile.read(content_length) if content_length > 0 else b"{}"
             payload = json.loads(raw_body.decode("utf-8"))
@@ -82,4 +86,11 @@ class handler(BaseHTTPRequestHandler):
                 },
             )
         except Exception as exc:
-            self._send_json(400, {"status": "error", "detail": str(exc)})
+            self._send_json(
+                400,
+                {
+                    "status": "error",
+                    "detail": str(exc),
+                    "trace": traceback.format_exc(limit=3),
+                },
+            )
